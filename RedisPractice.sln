@@ -1,31 +1,48 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30406.217
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisPractice", "RedisPractice\RedisPractice.csproj", "{91219012-D8B2-41A7-84C7-562CA0B5AA2F}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.26124.0
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisPractice", "RedisPractice\RedisPractice.csproj", "{359474CF-D420-4180-AD3B-D657263EE736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisPracticeTest", "RedisPracticeTest\RedisPracticeTest.csproj", "{0DBE2A7B-E433-4591-8C20-6888B2F4B63F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisPracticeTest", "RedisPracticeTest\RedisPracticeTest.csproj", "{1BA007DD-50B5-411A-AE48-D5FDEC757D69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{91219012-D8B2-41A7-84C7-562CA0B5AA2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91219012-D8B2-41A7-84C7-562CA0B5AA2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91219012-D8B2-41A7-84C7-562CA0B5AA2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91219012-D8B2-41A7-84C7-562CA0B5AA2F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DBE2A7B-E433-4591-8C20-6888B2F4B63F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DBE2A7B-E433-4591-8C20-6888B2F4B63F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DBE2A7B-E433-4591-8C20-6888B2F4B63F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DBE2A7B-E433-4591-8C20-6888B2F4B63F}.Release|Any CPU.Build.0 = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {20530B4E-FD6F-45A9-ABBB-2C6C81D9502E}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|x64.Build.0 = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Debug|x86.Build.0 = Debug|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|x64.ActiveCfg = Release|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|x64.Build.0 = Release|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|x86.ActiveCfg = Release|Any CPU
+		{359474CF-D420-4180-AD3B-D657263EE736}.Release|x86.Build.0 = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|x64.Build.0 = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Debug|x86.Build.0 = Debug|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|x64.ActiveCfg = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|x64.Build.0 = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BA007DD-50B5-411A-AE48-D5FDEC757D69}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

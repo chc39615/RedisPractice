@@ -1,85 +1,79 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
-namespace RedisPractice.Provider.Interface
+namespace RedisPractice.Providers
 {
     public interface ICacheProvider
     {
         /// <summary>
-        /// 預設過期 TimeSpan
+        /// 預設逾期 TimeSpane
         /// </summary>
-        //TimeSpan DefaultExpired => System.Configuration.ConfigurationManager.AppSettings["MemeryCacheTime"];
+        /// <value></value>
         TimeSpan DefaultExpired { get; }
 
         /// <summary>
-        /// 永不過期的 TimeSpan ( 不自動過期，直到 cache 清除)
+        /// 永不逾期的 TimeSpan (不自動逾期，直到 cache 清除)
         /// </summary>
+        /// <value></value>
         TimeSpan NeverExpired { get; }
 
         /// <summary>
         /// 快取順序
         /// </summary>
+        /// <value></value>
         int CachePriority { get; set; }
 
         /// <summary>
-        /// 設定快取值，TimeSpan 不指定時取預設值 (DefaultExpired => 預設值，NeverExpired => 永不過期)
+        /// 設定快取值，TimeSpane 不指定時取預設值
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="expired"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         bool Set<T>(string key, T value, TimeSpan expired = default);
 
         /// <summary>
-        /// 設定快取值，TimeSpan 不指定時取預設值 (DefaultExpired => 預設值，NeverExpired => 永不過期)
+        /// 非同步設定快取值，TimeSpane 不指定時取預設值
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="expired"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         Task<bool> SetAsync<T>(string key, T value, TimeSpan expired = default);
 
         /// <summary>
-        /// 取得快取裡的值，並轉成指定的類型，如果沒有值就回傳 null
+        /// 取得快取值，轉型成 T 後回傳
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        T Get<T>(string key) where T : class;
+        T Get<T>(string key);
 
         /// <summary>
-        /// 取得快取裡的值，如果沒有值，就執行 func ，並回寫快取 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        T Get<T>(string key, Func<T> func) where T : class;
-
-        /// <summary>
-        /// 移除快取中的 key 值
+        /// 移除快取值
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
         bool Remove(string key);
 
-
         /// <summary>
-        /// 移除快取中的 key 值
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        Task<bool> RemoveAsync(string key);
-
-        /// <summary>
-        /// 移除快取中的 key 值
+        /// 移除多組快取值
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
         bool Remove(string[] keys);
 
         /// <summary>
-        /// 移除快取中的 key 值
+        /// 非同步移除快取值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        Task<bool> RemoveAsync(string key);
+
+        /// <summary>
+        /// 非同步移除多組快取值
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
@@ -121,48 +115,43 @@ namespace RedisPractice.Provider.Interface
         bool LockRelease(string key, string token);
 
         /// <summary>
-        /// 寫入Hash (KeyValuePair的集合)
+        /// 寫入 Hash (keyValuePair集合)
         /// </summary>
         /// <param name="key"></param>
         /// <param name="hashKey"></param>
         /// <param name="value"></param>
-        void HashSet<T>(string key, string hashKey, T value, TimeSpan expired = default);
-
-
-        /// <summary>
-        /// 寫入Hash (KeyValuePair的集合)
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="hashKey"></param>
-        /// <param name="value"></param>
-        Task HashSetAsync<T>(string key, string hashKey, T value, TimeSpan expired = default);
-
-        /// <summary>
-        /// 取得Hash值(其中一組 KeyValuePair 的 value)
-        /// </summary>
+        /// <param name="expired"></param>
         /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        bool HashSet<T>(string key, string hashKey, T value, TimeSpan expired = default);
+
+        /// <summary>
+        /// 非同步寫入 Hash (keyValuePair集合)
+        /// </summary>
         /// <param name="key"></param>
         /// <param name="hashKey"></param>
+        /// <param name="value"></param>
+        /// <param name="expired"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<bool> HashSetAsync<T>(string key, string hashKey, T value, TimeSpan expired = default);
+
+        /// <summary>
+        /// 取得Hash裡的值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="hashKey"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         T HashGet<T>(string key, string hashKey);
 
-
         /// <summary>
-        /// 將 HashKey 值加 value 後，取出 (代表目前的值)
-        /// 如果沒有這個 key-hashKey, 將會從 1 開始
+        /// 將 HashKey 值加 value 後取出 (代表目前的值)
         /// </summary>
         /// <param name="key"></param>
         /// <param name="hashKey"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         double HashIncrement(string key, string hashKey, double value);
-
-        /// <summary>
-        /// 將 HashKey 值加 value 後，取出 (代表目前的值)，如果沒有辦法取得，就執行 func 來取得
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="hashKey"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        double HashIncrement(string key, string hashKey, double value, Func<double> func);
     }
 }
