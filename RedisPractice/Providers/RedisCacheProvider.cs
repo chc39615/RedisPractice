@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 using Newtonsoft.Json;
@@ -36,14 +35,13 @@ namespace RedisPractice.Providers
         /// </summary>
         private readonly int defaultDb = 0;
 
-        public static ConnectionMultiplexer Connection => lazyConnection.Value;
+        public static ConnectionMultiplexer Connection => LazyConnection.Value;
 
         /// <summary>
         /// ConnectionMultiplexer 是 ThreadSafe 的物件
         /// </summary>
-        /// <typeparam name="ConnectionMultiplexer"></typeparam>
         /// <returns></returns>
-        public static readonly Lazy<ConnectionMultiplexer> lazyConnection
+        public static readonly Lazy<ConnectionMultiplexer> LazyConnection
             = new Lazy<ConnectionMultiplexer>(() =>
             {
                 var options = new ConfigurationOptions();
@@ -76,13 +74,13 @@ namespace RedisPractice.Providers
                 ex = ex.InnerException;
             }
 
-            Dictionary<string, string> details = new Dictionary<string, string>
-            {
-                { "CacheProvider", GetType().Name },
-                { "Method", method },
-                { "Data", data },
-                { "exception", ex.Message }
-            };
+            //Dictionary<string, string> details = new Dictionary<string, string>
+            //{
+            //    { "CacheProvider", GetType().Name },
+            //    { "Method", method },
+            //    { "Data", data },
+            //    { "exception", ex.Message }
+            //};
 
             // 在測試時，有發生 Stackexchange.Redis 無法讀取 redise server 回應
             // 的情況，(目前無法重現)，所以在這裡判斷，如果是 RedisTimeoutExeption
@@ -112,8 +110,8 @@ namespace RedisPractice.Providers
             // 此方法尚未驗證，日後有發生的時候，要注意驗證
             if (ex is RedisTimeoutException)
             {
-                lazyConnection.Value.Close();
-                lazyConnection.Value.Dispose();
+                LazyConnection.Value.Close();
+                LazyConnection.Value.Dispose();
             }
 
         }
@@ -127,7 +125,7 @@ namespace RedisPractice.Providers
         {
             var cache = Connection.GetDatabase(defaultDb);
 
-            RedisValue redisValue = new();
+            RedisValue redisValue;
 
             try
             {
@@ -161,7 +159,7 @@ namespace RedisPractice.Providers
         {
             var cache = Connection.GetDatabase(defaultDb);
 
-            RedisValue value = new();
+            RedisValue value;
 
             try
             {
@@ -232,27 +230,24 @@ namespace RedisPractice.Providers
             }
 
             var result = cache.HashSetAsync(key, hashKey, valueString)
-            .ContinueWith<bool>(t =>
-            {
-                bool result = false;
-                if (t.Exception == null)
+                .ContinueWith(t =>
                 {
-                    cache.ExecuteAsync("expire", key, expired.TotalSeconds)
-                    .ContinueWith<bool>(u =>
+                    bool innerResult= false;
+                    if (t.Exception == null)
                     {
-                        int.TryParse((string)u.Result, out int affectedRows);
-                        return affectedRows == 1;
-                    });
+                        var expireResult = cache.Execute("expire", key, expired.TotalSeconds);
 
-                }
-                else
-                {
-                    ExceptionLogHandler(t.Exception, "HashSetAsync", new { key, hashKey, value });
-                }
+                        int.TryParse((string)expireResult, out int affectedRows);
+                        innerResult = affectedRows == 1;
+                    }
+                    else
+                    {
+                        ExceptionLogHandler(t.Exception, "HashSetAsync", new { key, hashKey, value });
+                    }
 
-                return result;
+                    return innerResult;
 
-            });
+                });
 
             return result;
         }
@@ -261,7 +256,7 @@ namespace RedisPractice.Providers
         {
             var cache = Connection.GetDatabase(defaultDb);
 
-            bool result = default;
+            bool result;
 
             if (expired == default)
                 expired = DefaultExpired;
@@ -303,7 +298,7 @@ namespace RedisPractice.Providers
 
             var cache = Connection.GetDatabase(defaultDb);
 
-            string[] innerResult = default;
+            string[] innerResult;
 
             try
             {
@@ -324,7 +319,7 @@ namespace RedisPractice.Providers
         {
             var cache = Connection.GetDatabase(defaultDb);
 
-            bool result = false;
+            bool result;
 
             try
             {
@@ -343,7 +338,7 @@ namespace RedisPractice.Providers
         public bool LockTake(string key, string token, TimeSpan lockTime)
         {
             var cache = Connection.GetDatabase(defaultDb);
-            bool result = false;
+            bool result;
 
             try
             {
@@ -365,7 +360,7 @@ namespace RedisPractice.Providers
 
             var cache = Connection.GetDatabase(defaultDb);
 
-            bool result = false;
+            bool result;
 
             try
             {
@@ -387,10 +382,13 @@ namespace RedisPractice.Providers
 
             var cache = Connection.GetDatabase(defaultDb);
 
-            var task = cache.KeyDeleteAsync(key);
+            var task = cache.KeyDeleteAsync(key)
+                .ContinueWith(t =>
+                {
+                    ExceptionLogHandler(t.Exception, "RemoveAsync", new { key });
+                    return false;
+                }, TaskContinuationOptions.OnlyOnFaulted);
 
-            task.ContinueWith(t => ExceptionLogHandler(t.Exception, "RemoveAsync", new { key })
-            , TaskContinuationOptions.OnlyOnFaulted);
 
             return task;
         }
@@ -401,7 +399,7 @@ namespace RedisPractice.Providers
 
             var cache = Connection.GetDatabase(defaultDb);
 
-            bool result = false;
+            bool result;
 
             try
             {
@@ -428,24 +426,23 @@ namespace RedisPractice.Providers
             var cache = Connection.GetDatabase(defaultDb);
 
             var result = cache.ExecuteAsync("del", keys)
-                .ContinueWith<bool>(t =>
+                .ContinueWith(t =>
                 {
-                    bool result = false;
+                    bool innerResult = false;
 
                     if (t.Exception == null)
                     {
                         int.TryParse((string)t.Result, out int affectedRows);
 
                         // 不確定是不是每一個key 都偭存在，所以只要有一筆成功，就視為全部成功
-                        result = affectedRows > 0;
+                        innerResult = affectedRows > 0;
                     }
                     else
                     {
                         ExceptionLogHandler(t.Exception, "RemoveAsync", new { keys });
                     }
 
-
-                    return result;
+                    return innerResult;
                 });
 
             return result;
@@ -469,7 +466,7 @@ namespace RedisPractice.Providers
                 valueString = JsonConvert.SerializeObject(value);
             }
 
-            bool result = false;
+            bool result;
 
             try
             {
@@ -519,9 +516,8 @@ namespace RedisPractice.Providers
                 result = cache.StringSetAsync(key, valueString, expired);
             }
 
-            result.ContinueWith(t =>
-                            ExceptionLogHandler(t.Exception, "SetAsync<T>", new { key, value, expired })
-                            , TaskContinuationOptions.OnlyOnFaulted);
+            result.ContinueWith(t => ExceptionLogHandler(t.Exception, "SetAsync", new { key, value, expired })
+                    , TaskContinuationOptions.OnlyOnFaulted);
 
             return result;
         }

@@ -135,7 +135,7 @@ namespace RedisPractice
         /// <param name="expired"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        T HashGet<T>(string key, string hashKey, func<T> func, TimeSpan expired = default);
+        T HashGet<T>(string key, string hashKey, Func<T> func, TimeSpan expired = default);
 
         /// <summary>
         /// 對 Hash Key 的舊值 + value 後回傳(回傳值等於現值)
